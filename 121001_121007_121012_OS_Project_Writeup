@@ -1,0 +1,50 @@
+New Synchronizer
+Aditya Parikh (121001)
+Atman Jain (121007)
+Erali Shah (121012)
+
+Goal:To develop a new system call for the operating system that can implement synchronizing functions like deadlock prevention, deadlock avoidance, spin lock and other methodologies which can help in using the critical section efficiently.
+
+Description:We need to develop two modules. One which will generate a system call which will be called before using of the critical section. Another is to create different functionalities in efficient way to avoid problems of deadlock and starvation while using critical section. It includes use of semaphore or monitors or message passing. All the functions and methods are implemented at kernel level and the system call works as the interface between kernel mode and user mode.  The functions are called to kernel mode through system call.
+
+Implementation:
+Stage 1:
+Try to understand how the Linux Synchronizer works.
+ Where the Synchronizer files are located in the kernel files. 
+Try to understand those files and see which functions are implemented in Linux operating system to use critical section efficiently.
+Stage 2: Try in what other ways those functions can be implemented more efficiently and re-compile the operating system in order to see the changes.
+
+Different files of kernel relating to synchronizer:
+rwsem-spinlock.h  -- semaphore declaration
+rwsem.h   -- R/W semaphores
+Spinlock.h  --spinock implementation
+seqlock.h--Reader/writer consistent mechanism without starving writers. This type of lock for data where the reader wants a consistent set of information and is willing to retry if the information changes. There are two typesof readers:
+1) Sequence readers which never block a writer but they may have to retry if a writer is in progress by detecting change in sequence number.Writers do not wait for a sequence reader.
+2) Locking readers which will wait if a writer or another locking readeris in progress. A locking reader in progress will also block a writer from going forward. Unlike the regular rwlock, the read lock here is exclusive so that only one locking reader can get it.
+
+mutex.h -- blocking mutual exclusion locks.
+mutex_debug.h  -- Mutexes debugging helpers
+rtmutex.h--RT Mutexes: blocking mutual exclusion locks with PI support.
+wait.h  --Linux wait queue related types and methods
+semaphore.h
+Ww-mutex.h -- blocking mutual exclusion locks with deadlock avoidance. Wound/Wait implementation
+preempt.h
+linkage.h
+compiler.h
+irqflags.h -- IRQ flags tracing: follow the state of the hardirq and softirq flags and provide callbacks for transitions between ON and OFF states.
+thread_info.h--common low-level thread information accessory.
+Kernel.h
+stringify.h
+bottom_half.h
+barrier.h
+lglock.h   --Specialised local-global spinlock. Can only be declared as global variables to avoid overhead and keep things simple (and we don't want to start using these inside dynamically allocated structures).
+ipc.h --inter process communications where spinlock is located and maximum size of ipc array is set
+ipc_namespace.h – namespace ids are created for semaphores
+rt.h – priority for selection of process.
+osq_lock.h  --optimizing spinning queue
+rwlock.h --rwlock related methods split out from spinlock.h
+rwlock_api_smp.h --spinlock API declarations on SMP (and debug)
+rwlock_types.h --generic rwlock type definitions and initializers
+lockref.h--Locked reference counts. These are different from just plain atomic refcounts in that they are atomic with respect to the spinlock that goes with them. In particular, there can be implementations that don't actually get the spinlock for the common decrement/increment operations, but they still have to check that the operation is done semantically as if the spinlock had been taken (using a cmpxchg operation that covers both the lock and the count word, or using memory transactions, for example)
+typecheck.h   --Check at compile time that something is of a particular type. Always evaluates to 1 so you may use it easily in comparisons.
+bit_spinlock.h   - bit based spin lock.
